@@ -1,0 +1,85 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+	xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+	xmlns:eim="clr-namespace:Microsoft.Expression.Interactivity.Media;assembly=Microsoft.Expression.Interactions"
+	xmlns:system="clr-namespace:System;assembly=mscorlib"
+	xmlns:pullToRefreshListBox="clr-namespace:PullToRefreshListBox">
+
+    <Style TargetType="pullToRefreshListBox:UCPullToRefreshListBox" x:Key="PullToRefreshListBoxStyle2">
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.ManipulationMode" Value="Control"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="pullToRefreshListBox:UCPullToRefreshListBox">
+                    <Grid>
+                        <Grid.Resources>
+                            <Storyboard x:Name="GetArrowUp">
+                                <DoubleAnimation Duration="0:0:0.3" To="180" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationZ)" Storyboard.TargetName="Arrow" />
+                            </Storyboard>
+                            <Storyboard x:Name="GetArrowDown">
+                                <DoubleAnimation Duration="0:0:0.3" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationZ)" Storyboard.TargetName="Arrow" />
+                            </Storyboard>
+                        </Grid.Resources>
+                        <i:Interaction.Triggers>
+                            <ec:DataTrigger Binding="{Binding IsArrowDown, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+                                <eim:ControlStoryboardAction Storyboard="{StaticResource GetArrowUp}"/>
+                            </ec:DataTrigger>
+                            <ec:DataTrigger Binding="{Binding IsArrowDown, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                <eim:ControlStoryboardAction Storyboard="{StaticResource GetArrowDown}"/>
+                            </ec:DataTrigger>
+                        </i:Interaction.Triggers>
+                        <Border
+			                BorderBrush="{TemplateBinding BorderBrush}"
+			                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="ScrollViewer" HorizontalScrollBarVisibility="Disabled" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="0" TabNavigation="{TemplateBinding TabNavigation}">
+                                <StackPanel>
+                                    <StackPanel Opacity="{Binding TextOpacity, RelativeSource={RelativeSource TemplatedParent}}" Margin="20,-80,20,80" Orientation="Horizontal" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                        <Polygon x:Name="Arrow" Points="9,0 9,18 0,9 0,18 12,30 24,18 24,9 15,18 15,0 9,0" Fill="{TemplateBinding Foreground}">
+                                            <Polygon.Projection>
+                                                <PlaneProjection />
+                                            </Polygon.Projection>
+                                        </Polygon>
+                                        <Grid>
+                                            <Grid.Resources>
+                                                <Storyboard x:Name="ShowPullText">
+                                                    <DoubleAnimation Duration="0:0:0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PullTextBlock" />
+                                                    <DoubleAnimation Duration="0:0:0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ReleaseTextBlock" />
+                                                </Storyboard>
+                                                <Storyboard x:Name="ShowReleaseText">
+                                                    <DoubleAnimation Duration="0:0:0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PullTextBlock" />
+                                                    <DoubleAnimation Duration="0:0:0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ReleaseTextBlock" />
+                                                </Storyboard>
+                                            </Grid.Resources>
+                                            <i:Interaction.Triggers>
+                                                <ec:DataTrigger Binding="{Binding IsArrowDown, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+                                                    <eim:ControlStoryboardAction Storyboard="{StaticResource ShowReleaseText}"/>
+                                                </ec:DataTrigger>
+                                                <ec:DataTrigger Binding="{Binding IsArrowDown, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <eim:ControlStoryboardAction Storyboard="{StaticResource ShowPullText}"/>
+                                                </ec:DataTrigger>
+                                            </i:Interaction.Triggers>
+                                            <TextBlock x:Name="PullTextBlock" Opacity="1" Text="{Binding PullToRefreshText, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Margin="20,0,0,0" MinWidth="150" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ReleaseTextBlock" Opacity="0" Text="{Binding ReleaseToRefreshText, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Margin="20,0,0,0" MinWidth="150" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,-30,0,-10" x:Name="LoaderPanel" HorizontalAlignment="Stretch" >
+                                        <ProgressBar Opacity="{Binding LoaderOpacity, RelativeSource={RelativeSource TemplatedParent}}" Height="20" x:Name="ProgressBar" IsIndeterminate="True" Foreground="{TemplateBinding Foreground}"/>
+                                    </StackPanel>
+                                    <ItemsPresenter />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
